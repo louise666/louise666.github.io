@@ -176,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="更新于：2025-05-12 07:05:44" itemprop="dateModified" datetime="2025-05-12T07:05:44+08:00">2025-05-12</time>
+                <time title="更新于：2025-05-12 07:14:51" itemprop="dateModified" datetime="2025-05-12T07:14:51+08:00">2025-05-12</time>
               </span>
 
           
@@ -207,7 +207,7 @@
 <li>对loss之和在meta model上梯度更新</li>
 <li>重复以上2，3步</li>
 </ol>
-<h3 id="核心问题"><a href="#核心问题" class="headerlink" title="核心问题"></a>核心问题</h3><h3 id="image-20250512054748518-C-Users-siwei-zhang-AppData-Roaming-Typora-typora-user-images-image-20250512054748518-png"><a href="#image-20250512054748518-C-Users-siwei-zhang-AppData-Roaming-Typora-typora-user-images-image-20250512054748518-png" class="headerlink" title="![image-20250512054748518](C:\Users\siwei zhang\AppData\Roaming\Typora\typora-user-images\image-20250512054748518.png)"></a>![image-20250512054748518](C:\Users\siwei zhang\AppData\Roaming\Typora\typora-user-images\image-20250512054748518.png)</h3><p>Hessian矩阵</p>
+<h3 id="核心问题"><a href="#核心问题" class="headerlink" title="核心问题"></a>核心问题</h3><p>Hessian矩阵</p>
 <h2 id="ANIL"><a href="#ANIL" class="headerlink" title="ANIL"></a>ANIL</h2><p>可以看出由于在模型更新过程中，需要求二阶导数，导致训练难度急剧上升</p>
 <h3 id="代码实践"><a href="#代码实践" class="headerlink" title="代码实践"></a>代码实践</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MAML内循环适配  </span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inner_adapt</span>(<span class="params">model, task_data, inner_lr, num_steps</span>):  </span><br><span class="line">    fast_weights = <span class="built_in">list</span>(model.parameters())  </span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_steps):  </span><br><span class="line">        loss = compute_loss(model, task_data)  </span><br><span class="line">        grads = torch.autograd.grad(loss, fast_weights)  </span><br><span class="line">        fast_weights = [w - inner_lr * g <span class="keyword">for</span> w,g <span class="keyword">in</span> <span class="built_in">zip</span>(fast_weights,grads)]  </span><br><span class="line">    <span class="keyword">return</span> fast_weights  </span><br></pre></td></tr></table></figure>
 
